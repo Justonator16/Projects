@@ -129,34 +129,34 @@ def check_winner(board, list_of_number_indexes):
     for possible_win in all_possible_wins_indexes:
         for win in possible_win_check_x:
             if possible_win == win:
-                print("X won the game")
+                return "X won the game"
                 break
     
     for possible_win in all_possible_wins_indexes:
         for win in possible_win_check_o:
             if possible_win == win:
-                print("O won the game")
+                return "O won the game"
                 break
     
 moves =  0
 board = "+-------+-------+-------+\n|       |       |       |\n|   1   |   2   |   3   |\n|       |       |       |\n+-------+-------+-------+\n|       |       |       |\n|   4   |   5   |   6   |\n|       |       |       |\n+-------+-------+-------+\n|       |       |       |\n|   7   |   8   |   9   |\n|       |       |       |\n+-------+-------+-------+"
 original_board_number_indexes_list = get_number_indexes(board)
-
-
-while moves <= 9:
-    if check_winner(board,original_board_number_indexes_list) == "X won the game":
-        print("X is the winner GG")
-        break
-    moves += 1
-    board = computer_move(board)
-    print(board)
     
-    if check_winner(board,original_board_number_indexes_list) == "0 won the game":
-        print("O is the winner GG")
-        break
-    moves += 1
-    board = user_move(board)
-    print(board)
+for i in range(8):
+    try:
+        if "X won the game" in check_winner(board,original_board_number_indexes_list)  :
+            print("X is the winner GG")
+            break
+        elif "O won the game" in check_winner(board,original_board_number_indexes_list) :
+            print("O is the winner GG")
+            break
+    except:
+        moves += 1
+        board = computer_move(board)
+        print(board)
+        moves += 1
+        board = user_move(board)
+        print(board)
 
     
 
