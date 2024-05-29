@@ -1,7 +1,7 @@
 from random import randrange, sample
 
 print("Welcome to my X and O game")
-print("This is part of showcase in understanding python essentials with a simple project ;)")
+print("This is part of showcase in understanding python essentials with a simple project :)")
                 
 def computer_move(board):
     board = list(board)
@@ -119,11 +119,11 @@ def check_winner(board, list_of_number_indexes):
     
     #Cretaes a list with lists of 3 random selected values from the x_indexes_board
     if len(x_indexes_board) >= 3:
-        for i in range(5):
+        for i in range(25):
             possible_win_check_x.append(sample(x_indexes_board,3))
     
     if len(o_indexes_board) >= 3:
-        for i in range(5):
+        for i in range(25):
             possible_win_check_o.append(sample(o_indexes_board,3))
       
     for possible_win in all_possible_wins_indexes:
@@ -141,27 +141,26 @@ def check_winner(board, list_of_number_indexes):
 moves =  0
 board = "+-------+-------+-------+\n|       |       |       |\n|   1   |   2   |   3   |\n|       |       |       |\n+-------+-------+-------+\n|       |       |       |\n|   4   |   5   |   6   |\n|       |       |       |\n+-------+-------+-------+\n|       |       |       |\n|   7   |   8   |   9   |\n|       |       |       |\n+-------+-------+-------+"
 original_board_number_indexes_list = get_number_indexes(board)
-    
-for i in range(8):
+
+
+while moves < 9:
+    moves += 1
+    board = computer_move(board)
+    print(board)
     try:
         if "X won the game" in check_winner(board,original_board_number_indexes_list)  :
             print("X is the winner GG")
             break
-        elif "O won the game" in check_winner(board,original_board_number_indexes_list) :
-            print("O is the winner GG")
-            break
     except:
         moves += 1
-        board = computer_move(board)
-        print(board)
-        moves += 1
         board = user_move(board)
-        print(board)
-
-    
-
-
-
-        
-        
-        
+        try:
+            if "O won the game" in check_winner(board,original_board_number_indexes_list) :
+                print(board)
+                print("O is the winner GG")
+                break
+        except:
+            print(board)
+    if moves == 8:
+        print("Its a tie")
+        break
