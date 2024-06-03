@@ -10,6 +10,7 @@ answer = BeautifulSoup(result.text, "html.parser")
 only_text = answer.get_text()
 
 #Phase one is extracting specific text related to blocks and the surburbs 
+print("Main Branch section added")
 phase_one = []
 for i in range(len(only_text)):
     #Check for "Block 1" text in paragraph
