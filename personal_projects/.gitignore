@@ -1,5 +1,5 @@
 #Ignores all files with .py extension
-*.py
+*personal_projects/
 
 #This file is not ignored by due to the !
-!web_scraper.py
+!personal_projects/web_scraper.py
