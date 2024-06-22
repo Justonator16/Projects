@@ -1,22 +1,26 @@
 from bs4 import BeautifulSoup
 import requests
 
-
 url = "https://www.ourpower.co.za/areas/jhb-city-power/blocks"
 
 result = requests.get(url)
 
-answer = BeautifulSoup(result.text, "html.parser")
-only_text = answer.get_text()
+soup = BeautifulSoup(result.text, "html.parser")
+# only_text = answer.get_text()
 
-#Phase one is extracting specific text related to blocks and the surburbs 
-print("Main Branch section added")
-print("Merger branch edit")
-phase_one = []
-for i in range(len(only_text)):
-    #Check for "Block 1" text in paragraph
-    if only_text[i] == "B" and only_text[i+1] == "l" \
-        and only_text[i+2] == "o" and only_text[i+1] == "c" \
-            and only_text[i+2] == "k" and only_text[i+3] == "" and only_text[i+4] == "1":
-        phase_one.append(only_text[i:])
-print(phase_one)
+#returns html code with <a></a> tags and the text in the tags
+a_tags_html = soup.find_all('a')
+
+block_numbers = [ "Block "+ str(i) for i in range(1,18) ]
+cities = []
+
+for i in a_tags_html:
+    text_in_tag = i.get_text()
+    if "Customer" in text_in_tag:
+        quit()
+    elif "View The Loadshedding Schedule For Jhb City Power" != text_in_tag:
+        cities.append(str(i.get_text()))
+
+print(len(cities))
+
+
