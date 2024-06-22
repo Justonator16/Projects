@@ -22,9 +22,7 @@ def simplify_solution(fraction):
         simplified_numerator = numerator_solution / max(common_factors)
         simplified_denominator = denominator_solution / max(common_factors)
 
-        final_solution = [str(int(simplified_numerator)),"/", str(int(simplified_denominator))]
-
-    return "".join(final_solution)
+    return "".join([str(int(simplified_numerator)),"/", str(int(simplified_denominator))])
 
 def solution_of_two_fractions_based_on_operator(fraction1,fraction2,operator):
     f1_numerator = get_numerator(fraction1)
@@ -46,9 +44,7 @@ def solution_of_two_fractions_based_on_operator(fraction1,fraction2,operator):
         numerator_simplify = f1_numerator * f2_denominator
         denominator_simplify = f1_denominator * f2_numerator
 
-    final_solution = [str(numerator_simplify),"/", str(denominator_simplify)]
-
-    return "".join(final_solution)
+    return "".join([str(numerator_simplify),"/", str(denominator_simplify)])
 
 fraction1 = input("Enter fraction here: ")
 user_operation = input("Enter operation +,-,x,/ here: ")
