@@ -31,13 +31,13 @@ else:
     length_of_password = int(length_of_password)
 
 include_numbers = input("Do you want to numbers in your password ?(y/n) ")
-if "y" in include_numbers or "Y" in include_numbers:
+if "y" in include_numbers.lower():
     include_numbers = True
 else:
     include_numbers = False
 
 special_characters = input("Do you want special characters in your password ?(y/n) ")
-if "y" in special_characters or "Y" in special_characters:
+if "y" in special_characters.lower():
     special_characters = True
 else:
     special_characters = False
