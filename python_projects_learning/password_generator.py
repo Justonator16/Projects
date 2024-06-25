@@ -42,5 +42,6 @@ if "y" in special_characters or "Y" in special_characters:
 else:
     special_characters = False
 
+print()
 print(generate_password(length_of_password,include_numbers,special_characters))
 
