@@ -12,7 +12,7 @@ class FractionCalculator:
         if "/" not in fraction1 or "/" not in fraction2:
             raise Exception("Invalid fraction. Valid fractions eg 1/2, 4/5, 7/5")
         
-        valid_operators = ["+","-","x","*","/"]
+        valid_operators = ["+","-","x","*","/"            ]
         if operator not in valid_operators:
             raise Exception("Invalid operator :( , please choose from +,-,x,*,/ ")
 
