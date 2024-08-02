@@ -1,6 +1,5 @@
 import random
 import time
-from magic_cards import perform_magic_of_card, magic_card
 
 def deck_of_cards():
     suits = ["Diamonds","Clubs","Hearts","Spades"]
