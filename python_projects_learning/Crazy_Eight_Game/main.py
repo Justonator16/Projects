@@ -35,11 +35,11 @@ def main():
         #First checcks if computer card is a magic card
         if magic_card(playable_computer_card) == True:
             #TODO : Perform specific card magic based on card
-            perform_magic_of_card(playable_computer_card, computer_card_deck=computer_cards, player_card_deck=player_cards)
+            perform_magic_of_card(playable_computer_card, computer_card_deck=computer_cards, player_card_deck=player_cards, pool=pool, card_deck=cards_shuffled)
 
         elif playable_computer_card != None:
             #Add card to pool
-            print(f"Computer has {len(computer_cards)} left watch out")
+            print(f"Computer has {len(computer_cards)} cards left watch out")
             add_card_to_pool(card=playable_computer_card, pool=pool, player_card_deck=computer_cards)
         
         elif playable_computer_card == None:
@@ -59,5 +59,12 @@ def main():
             print()
         
 
-if __name__ == "__main__":\
-    main()
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("Thanks for playing my Crazy Eight Game.")
+        print("Goodbye")
+    except EOFError:
+        print("Thanks for playing my Crazy Eight Game.")
+        print("Goodbye")

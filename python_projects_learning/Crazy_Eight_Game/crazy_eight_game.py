@@ -106,17 +106,23 @@ def play_card_player(player_cards,pool):
         print("You do not have any valid playable cards")
         return None
     
-    user_input = input("Enter index/position of card you want to play here: ")
-    if user_input.isnumeric() == False:
-        print("Invalid input try again :(")
-        quit()
+    while True:
+        user_input = input("Enter index/position of card you want to play here: ")
+        if user_input.isnumeric() == False:
+            print("Invalid input enter a valid number try again :(")
+            continue
 
-    user_input = int(user_input)
-    if user_input < 0 and user_input >= len(player_cards):
-        print("Invalid Index :(")
-        quit()
+        user_input = int(user_input)
+        if user_input < 0 and user_input >= len(player_cards):
+            print("Error enter a number according to card indexs provided :(")
+            continue
+        else:
+            break
 
     if get_card_suit(current_card) in player_cards[user_input]:
+        print(f"You played {player_cards[user_input]}")
+        return player_cards[user_input]
+    elif get_card_number(current_card) in player_cards[user_input]:
         print(f"You played {player_cards[user_input]}")
         return player_cards[user_input]
 
@@ -134,12 +140,24 @@ def pick_a_card(computer_or_player_deck,card_deck):
 
 def add_card_to_pool(card,pool, player_card_deck):
     #Moves playable card in deck to pool
+
+    #You cant end crazy 8 with a magic card
+    magic_cards = ["1","2","7","8"]
+    if len(player_card_deck) == 1 and get_card_number(card) not in magic_cards:
+        print("We have winner GG")
+        print("Hooray")
+        quit()
+
     pool.append(card)
     player_card_deck.remove(card)
 
 
 #Returns true if card played is a magic card otherwise None
 def magic_card(card):
+    if card == None:
+        print("No card")
+        return None
+
     magic_cards = ["1","2","7","8","J"]
     for number in magic_cards:
         if number in card:
@@ -151,135 +169,174 @@ def perform_magic_of_card(card : str,computer_card_deck :list ,player_card_deck 
     magic_cards = ["1","2","7","8","J"]
 
     #When 1 or Ace is played any card must be placed on pool
-    if "1" in card:
-        for computer_card in computer_card_deck:
-            if computer_card == card:
-                #Moves card from deck to pool
-                pool.append(card)
-                computer_card_deck.remove(card)
-
-                #Next is for the other player to play any card
-                play_any_card_player_magic(player_card_deck=player_card_deck, pool=pool)
-
-        for my_card in player_card_deck:
-            if my_card == card:
-                pool.append(card)
-                player_card_deck.remove(card)
-
-                #Computer must play any card
-                play_any_card_computer_magic(computer_card_deck=computer_card_deck, pool=pool)
-            
-    elif "2" in card:
-        #If a player plays any with on it then the opponent must pick two cards from card_deck
-        for computer_card in computer_card_deck:
-            if computer_card == card:
-                #Takes two cards from deck and adds to player deck of cards
-                take_two_cards = card_deck[-2]
-                print("You took 2 cards from deck.")
-                player_card_deck.append(take_two_cards)
-            
-        for my_card in player_card_deck:
-            if my_card == card:
-                take_two_cards = card_deck[-2]
-                print("Computer took 2 cards from deck.")
-                computer_card_deck.append(take_two_cards)
-
-    elif "7" in card:
-        for computer_card in computer_card_deck:
-            if computer_card == card:
-                #If 7 played then the opponent move is skipped and computer must play again
-                card_picked = play_card_computer(computer_cards=computer_card_deck, pool=pool)
-
-                if card_picked != None:
-                    pool.append(card_picked)
-                    print(f"{card_picked} added to pool")
+    if "1" == get_card_number(card):
+        if card in computer_card_deck:
+            for computer_card in computer_card_deck:
+                if computer_card == card:
+                    #Moves card from deck to pool
+                    pool.append(card)
                     computer_card_deck.remove(card)
-                else:
-                    pick_a_card(computer_or_player_deck=computer_card_deck, card_deck=card_deck)
 
-        for my_card in player_card_deck:
-            if my_card == card:
-                #If 7 is played by player then computer move is skipped and player must play again
-                print("Play again since you played 7.")
+                    #Next is for the other player to play any card
+                    play_any_card_player_magic(player_card_deck=player_card_deck, pool=pool)
+        else:
+            for my_card in player_card_deck:
+                if my_card == card:
+                    pool.append(card)
+                    player_card_deck.remove(card)
 
-                card_picked = play_card_player(player_cards=player_card_deck, pool=pool)
+                    #Computer must play any card
+                    play_any_card_computer_magic(computer_card_deck=computer_card_deck, pool=pool)
+            
+    elif "2" == get_card_number(card):
+        #If a player plays any with on it then the opponent must pick two cards from card_deck
+        if card in computer_card_deck:
+            for computer_card in computer_card_deck:
+                if computer_card == card:
+                    pool.append(card)
+                    computer_card_deck.remove(card)
 
-                if card_picked != None:
-                    pool.append(card_picked)
-                    print(f"{card_picked} added to pool")
-                    player_card_deck.remove(card_picked)
-                else:
-                    pick_a_card(computer_or_player_deck=player_card_deck, card_deck=card_deck)
-    elif "8" in card:
-        #If 8 is played then player must pick a suit which will determine what card the other player will play
-        for computer_card in computer_card_deck:
-            if computer_card == card:
-                #Computer must pick a suit 
-                suits = ["Diamonds","Clubs","Hearts","Spades"]
+                    #Takes two cards from deck and adds to player deck of cards
+                    take_two_cards = card_deck[-2]
+                    print("Computer played a magic card 2 . When this card is played the opponent has to pick two cards from deck")
+                    print("You took 2 cards from deck.")
+                    print()
+                    player_card_deck.append(take_two_cards)
+        else:
+            for my_card in player_card_deck:
+                if my_card == card:
+                    pool.append(card)
+                    player_card_deck.remove(card)
 
-                suit_picked = random.sample(suits,k=1)
+                    take_two_cards = card_deck[-2]
+                    print("Computer played a magic card 2 . When this card is played the opponent has to pick two cards from deck")
+                    print("Computer took 2 cards from deck.")
+                    print()
+                    computer_card_deck.append(take_two_cards)
 
-                #Player must play a card based on suit chosen by computer
-                valid_cards_based_on_suit = []
-                for possible_card in player_card_deck:
-                    if suit_picked in possible_card:
-                        valid_cards_based_on_suit.append(possible_card)
-                
-                if valid_cards_based_on_suit == None:
-                    pick_a_card(computer_or_player_deck=player_card_deck, card_deck=card_deck)
-                    time.sleep(4)
-                    print("Due to no playable cards in your deck , you picked a card")
-                    return None
+    elif "7" == get_card_number(card):
+        if card in computer_card_deck:
+            for computer_card in computer_card_deck:
+                if computer_card == card:
+                    #If 7 played then the opponent move is skipped and computer must play again
+                    card_picked = play_card_computer(computer_cards=computer_card_deck, pool=pool)
 
-                #Player must play a card in valid cards
-                while True:
-                    try:
-                        index_of_card = int(input(f"Pick index of card to play between 0 and {len(player_card_deck) - 1}"))
-                        card_picked = player_card_deck[index_of_card]
-                        if card_picked in valid_cards_based_on_suit:
-                            pool.append(card_picked)
-                            player_card_deck.remove(card_picked)
-                            
-                            return f"{card_picked} successfully added to pool"
-
-                        else:
-                            print("The card you picked does not match the suit chosen by Computer")
-                            print("Try again")
-                            continue
-                    except:
-                        print("An error occured invalid index, Try again :(")
-                        continue
-        
-        for my_card in player_card_deck:
-            if my_card == card:
-                #Player must pick a suit which will be determine the card played by 
-                suits = ["Diamonds","Clubs","Hearts","Spades"]
-
-                while True:
-                    try:
-                        picked_suit = int(input("Pick a suit for the computer to play: "))
-                        valid_cards_based_on_suit = []
-
-                        for computer_card in computer_card_deck:
-                            if picked_suit in computer_card :
-                                valid_cards_based_on_suit.append(computer_card)
-
-                        if valid_cards_based_on_suit == []:
-                            pick_a_card(computer_or_player_deck=computer_card_deck, card_deck=card_deck)
-                            print("Computer picked a card due to no playable cards")
-                            return None
-                        
-                        #From valid cards pick a card to play
-                        card_picked = random.sample(valid_cards_based_on_suit, k=1)
-
+                    if card_picked != None:
                         pool.append(card_picked)
-                        print(f"Computer played {card_picked}")
-                        player_card_deck.remove(card_picked)
+                        print("Special card 7 played by computer meaning computer can play again ")
+                        print(f"Computer played again ,{card_picked} added to pool")
+                        print()
+                        print(pool)
+                        computer_card_deck.remove(card)
+                    else:
+                        pick_a_card(computer_or_player_deck=computer_card_deck, card_deck=card_deck)
 
+        else:
+            for my_card in player_card_deck:
+                if my_card == card:
+                    #If 7 is played by player then computer move is skipped and player must play again
+                    print("You played a magic card 7")
+                    print("Play Again")
+
+                    card_picked = play_card_player(player_cards=player_card_deck, pool=pool)
+
+                    if card_picked != None:
+                        pool.append(card_picked)
+                        print(f"{card_picked} added to pool")
+                        print(pool)
+                        print()
+                        player_card_deck.remove(card_picked)
+                    else:
+                        pick_a_card(computer_or_player_deck=player_card_deck, card_deck=card_deck)
+
+    elif "8" == get_card_number(card):
+        #If 8 is played then player must pick a suit which will determine what card the other player will play
+        if card in computer_card_deck:
+            for computer_card in computer_card_deck:
+                if computer_card == card:
+
+                    print("Computer played magic card 8")
+                    #Computer must pick a suit 
+                    suits = ["Diamonds","Clubs","Hearts","Spades"]
+                    
+                    #Sample method returns a list so its best l get the item in that list to aviod errors
+                    suit_picked = random.sample(suits,k=1)
+                    suit_picked = suit_picked[0]
+                    print(f"You must play a card with suit {suit_picked}")
+
+                    #Player must play a card based on suit chosen by computer
+                    valid_cards_based_on_suit = []
+                    for possible_card in player_card_deck:
+                        if suit_picked in possible_card:
+                            valid_cards_based_on_suit.append(possible_card)
+                    
+                    if valid_cards_based_on_suit == None:
+                        pick_a_card(computer_or_player_deck=player_card_deck, card_deck=card_deck)
+                        time.sleep(4)
+                        print("Due to no playable cards in your deck , you picked a card")
                         return None
-                    except:
-                        print("Invalid index for suit entered")
-                        continue
+
+                    #Player must play a card in valid cards
+                    while True:
+                        try:
+                            #Prints player card deck
+                            for index_of_card in range(len(player_card_deck)):
+                                print(f"{index_of_card} - {player_card_deck[index_of_card]}")
+
+                            index_of_card = int(input(f"Pick index of card to play between 0 and {len(player_card_deck) - 1} : "))
+                            card_picked = player_card_deck[index_of_card]
+                            if card_picked in valid_cards_based_on_suit:
+                                pool.append(card_picked)
+                                print()
+                                print(pool)
+                                player_card_deck.remove(card_picked)
+                                
+                                return f"{card_picked} successfully added to pool"
+
+                            else:
+                                print("The card you picked does not match the suit chosen by Computer")
+                                print("Try again")
+                                continue
+                        except:
+                            print("An error occured invalid index, Try again :(")
+                            continue
+        else:
+            for my_card in player_card_deck:
+                if my_card == card:
+                    #Player must pick a suit which will be determine the card played by 
+                    print("You played a magic card 8")
+                    print("You can change the current suit to be played by the computer")
+                    print()
+                    suits = ["Diamonds","Clubs","Hearts","Spades"]
+
+                    for index_of_suit in range(len(suits)):
+                        print(f"{index_of_suit} - {suits[index_of_suit]}")
+
+                    while True:
+                        try:
+                            picked_suit = int(input("Pick a suit index for the computer to play: "))
+                            valid_cards_based_on_suit = []
+
+                            for computer_card in computer_card_deck:
+                                if picked_suit in computer_card :
+                                    valid_cards_based_on_suit.append(computer_card)
+
+                            if valid_cards_based_on_suit == []:
+                                pick_a_card(computer_or_player_deck=computer_card_deck, card_deck=card_deck)
+                                print("Computer picked a card due to no playable cards")
+                                return None
+                            
+                            #From valid cards pick a card to play
+                            card_picked = random.sample(valid_cards_based_on_suit, k=1)
+
+                            pool.append(card_picked)
+                            print(f"Computer played {card_picked}")
+                            player_card_deck.remove(card_picked)
+
+                            return None
+                        except:
+                            print("Invalid index for suit entered")
+                            continue
         
 def play_any_card_player_magic(player_card_deck : list, pool : list):
     print("Computer played a magic card 1/Ace on the board")
@@ -288,24 +345,31 @@ def play_any_card_player_magic(player_card_deck : list, pool : list):
         print(f"{index} - {player_card_deck[index]}")
 
     while True:
-        try:
-            index_picked = int(input(f"Pick any number from 0 to {len(player_card_deck)- 1}"))
-            print()
+        index_picked = input("Pick any index of card to play: ")
 
-            card_picked = play_card_player[index_picked]
-            pool.append(card_picked)
-            print(f"You played {card_picked}")
-            play_card_player.remove(card_picked)
-
-            return True
-            
-        except:
-            print("Invalid index entered try again :(")
+        if index_picked.isalnum() == False:
+            print("Invalid index entered (enter only numbers) try again :(")
             continue
+        print()
+
+        #Makes str into int
+        index_picked = int(index_picked)
+
+        if index_picked not in range(len(player_card_deck)):
+            print(f"Index is out of range {range(len(player_card_deck))}")
+            continue
+
+        card_picked = player_card_deck[index_picked]
+
+        pool.append(card_picked)
+        print(f"You played {card_picked}")
+        player_card_deck.remove(card_picked)
+
+        return True
+        
 
 def play_any_card_computer_magic(computer_card_deck, pool):
     print("You played 1 which is a magic card.")
-    print()
 
     #Picks any card from deck and places it on pool
     card_picked = random.sample(computer_card_deck,k=1)
