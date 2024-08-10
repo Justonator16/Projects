@@ -24,7 +24,7 @@ def main():
     print("Below is the option menu where you can see your cards, the cards at the pool , play a card or exit the game.")
     print()
 
-    while len(cards_shuffled) != 1:
+    while len(computer_cards) != 1 or len(player_cards) != 1:
         #All cards in pool will be displayed to guide the player in making their move
         print(pool)
 
@@ -37,21 +37,25 @@ def main():
             #TODO : Perform specific card magic based on card
             perform_magic_of_card(playable_computer_card, computer_card_deck=computer_cards, player_card_deck=player_cards, pool=pool, card_deck=cards_shuffled)
 
-        elif playable_computer_card != None:
+        elif magic_card(playable_computer_card) == False:
             #Add card to pool
             print(f"Computer has {len(computer_cards)} cards left watch out")
             add_card_to_pool(card=playable_computer_card, pool=pool, player_card_deck=computer_cards)
         
-        elif playable_computer_card == None:
+        elif magic_card(playable_computer_card) == None:
             time.sleep(4)
             print("Computer picked a card due to no valid cards")
             pick_a_card(computer_cards, cards_shuffled)
         
         playable_player_card = play_card_player(player_cards, pool)
-        if playable_player_card != None:
+        if magic_card(playable_player_card) == True:
+            perform_magic_of_card(playable_computer_card, computer_card_deck=computer_cards, player_card_deck=player_cards, pool=pool, card_deck=cards_shuffled)
+
+        elif magic_card(playable_player_card) == False:
             #Remove card from deck and add card to pool 
             add_card_to_pool(card=playable_player_card, pool=pool, player_card_deck=player_cards)
-        else:
+
+        elif magic_card(playable_player_card) == None:
             time.sleep(4)
             pick_a_card(player_cards, cards_shuffled)
             print("Due to no playable cards in your deck.")
@@ -63,8 +67,10 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
+        print()
         print("Thanks for playing my Crazy Eight Game.")
         print("Goodbye")
     except EOFError:
+        print()
         print("Thanks for playing my Crazy Eight Game.")
         print("Goodbye")

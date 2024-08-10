@@ -153,17 +153,15 @@ def add_card_to_pool(card,pool, player_card_deck):
 
 
 #Returns true if card played is a magic card otherwise None
-def magic_card(card):
+def magic_card(card=None):
     if card == None:
-        print("No card")
         return None
-
+    
     magic_cards = ["1","2","7","8","J"]
     for number in magic_cards:
-        if number in card:
+        if number == get_card_number(card):
             return True
-    else:
-        return None
+    return False
     
 def perform_magic_of_card(card : str,computer_card_deck :list ,player_card_deck : list, pool : list, card_deck : list):
     magic_cards = ["1","2","7","8","J"]
