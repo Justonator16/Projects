@@ -1,5 +1,6 @@
 import random
 import time
+from banker import banker_offer
 
 print("Welcome to my Deal or No Deal Game.")
 print("The basic rules of the original deal or no deal apply.")
@@ -11,9 +12,9 @@ print()
 box_text = "Box_Number "
 boxes = [ box_text + str(number) for number in range(1,21)]
 
-amounts_in_boxes = ["1" ,"5" ,"10" ,"50" ,"100" ,"250" ,"500" ,"750" ,"1_000"
-                    ,"2_500" ,"5_000" ,"7_500" ,"10_000" ,"20_000" ,"30_000"
-                    ,"40_000" ,"50_000" ,"100_000" ,"150_000" ,"250_000"]
+amounts_in_boxes = [1 ,5 ,10 ,50 ,100 ,250 ,500 ,750 ,1_000
+                    ,2_500 ,5_000 ,7_500 ,10_000 ,20_000 ,30_000
+                    ,40_000 ,50_000 ,100_000 ,150_000 ,250_000]
 
 #Returns a randomly sorted list of amounts available
 def shuffle_amounts(amounts_unshuffled : list):
@@ -33,6 +34,24 @@ def pair_amounts_with_box_numbers(amounts_shuffled : list, box_numbers : list):
 
     return number_box_pair
 
+def group_numbers_in_three(number: int):
+    number = str(number)
+
+    separate_groups = []
+    if len(number) == 1 or len(number) == 2 or len(number) == 3:
+        return int(number)
+    elif len(number) == 4:
+        separate_groups.append(number[0])
+        separate_groups.append(number[1:])
+    elif len(number) == 5:
+        separate_groups.append(number[:2])
+        separate_groups.append(number[2:])
+    elif len(number) == 6:
+        separate_groups.append(number[:3])
+        separate_groups.append(number[3:])
+
+    return "_".join(separate_groups)
+
 #Returns all available amounts that have not been removed from money tree
 def display_amounts(amounts_not_picked: dict):
     print("The following are the available amounts")
@@ -41,10 +60,10 @@ def display_amounts(amounts_not_picked: dict):
     for amount in amounts:
         #Odd index will be left aligned
         if amounts.index(amount) % 2 != 0:
-            print(amount, end="               ")
+            print(group_numbers_in_three(amount), end="               ")
         #Even indexes will be right aligned
         if amounts.index(amount) % 2 == 0:
-            print(amount)
+            print(group_numbers_in_three(amount))
     print()
 
 
@@ -53,10 +72,10 @@ def display_amounts(amounts_not_picked: dict):
     for number in box_numbers:
         #Odd index will be left aligned
         if box_numbers.index(number) % 2 != 0:
-            print(number, end="               ")
+            print(group_numbers_in_three(number), end="               ")
         #Even indexes will be right aligned
         if box_numbers.index(number) % 2 == 0:
-            print(number)
+            print(group_numbers_in_three(number))
     print()
 
 def pick_a_box(money_tree: dict, box_player_picked : dict):
@@ -88,9 +107,9 @@ def pick_a_box(money_tree: dict, box_player_picked : dict):
         print()
         
         #Move box_number_money_pair picked to the removed boxes list
-        money_tree.pop(number_picked_by_player)
+        box_player_picked.update(box_amount_pair_picked)
 
-        return True
+        return box_amount_pair_picked
         
 #This function asks player which box they will like to remove from the money trees
 def remove_box_player(money_tree: dict, boxes_removed : dict, round : int):
@@ -126,7 +145,7 @@ def remove_box_player(money_tree: dict, boxes_removed : dict, round : int):
         money_tree.pop(number_picked_by_player)
         boxes_removed.update(box_amount_pair_picked)
 
-        return True
+        return box_amount_pair_picked
 
 
 def round_1(money_tree: dict, boxes_removed : dict, box_amount_pairs : dict, round : int):
@@ -135,36 +154,11 @@ def round_1(money_tree: dict, boxes_removed : dict, box_amount_pairs : dict, rou
         display_amounts(box_amount_pairs)
         remove_box_player(money_tree=box_amount_pairs, boxes_removed=boxes_removed, round=round)
 
-def round_2(money_tree: dict, boxes_removed : dict, box_amount_pairs, round : int):
+def other_rounds(money_tree: dict, boxes_removed : dict, box_amount_pairs, round : int):
     #Round 2 -  Remove 5 boxes and offer an amount
-    for i in range(5):
-        display_amounts(box_amount_pairs)
-        remove_box_player(money_tree=box_amount_pairs, boxes_removed=boxes_removed, round=round)
-
-def round_3(money_tree: dict, boxes_removed : dict, box_amount_pairs, round : int):
-    #Round 3 - Removes 4 boxes and offer an amount
-    for i in range(4):
-        display_amounts(box_amount_pairs)
-        remove_box_player(money_tree=box_amount_pairs, boxes_removed=boxes_removed, round=round)
-
-def round_4(money_tree: dict, boxes_removed : dict, box_amount_pairs, round : int):
-    #Round 4 - Removes 3 boxes and offer an amount
     for i in range(3):
         display_amounts(box_amount_pairs)
         remove_box_player(money_tree=box_amount_pairs, boxes_removed=boxes_removed, round=round)
-
-def round_5(money_tree: dict, boxes_removed : dict, box_amount_pairs, round : int):
-    #Round 5 - Removes 2 boxes and final offer
-    for i in range(3):
-        display_amounts(box_amount_pairs)
-        remove_box_player(money_tree=box_amount_pairs, boxes_removed=boxes_removed, round=round)
-
-def round_6(money_tree: dict, boxes_removed : dict, box_amount_pairs, round : int):
-    #Round 6 - Player must final box 
-    for i in range(2):
-        display_amounts(box_amount_pairs)
-        remove_box_player(money_tree=box_amount_pairs, boxes_removed=boxes_removed, round=round)
-
 
 def main():
     randomly_sorted_amounts = shuffle_amounts(amounts_unshuffled=amounts_in_boxes)
@@ -184,39 +178,32 @@ def main():
             print("First things first, pick a box you think has the amount you want. ")
             display_amounts(box_amount_pairs)
             pick_a_box(money_tree=box_amount_pairs , box_player_picked=box_player_picked)
+           
             round += 1
             continue
         elif round == 1:
             print("We are in Round 1 right now elimate 6 boxes")
             display_amounts(box_amount_pairs)
             round_1(money_tree=box_amount_pairs, boxes_removed=boxes_removed, box_amount_pairs=box_amount_pairs, round=round )
+            banker_offer(boxes_available=box_amount_pairs)
             round += 1
             continue
-        elif round == 2:
-            print("Round 2 eliminate 5 more boxes")
+        
+        elif round > 1 and len(boxes_removed.keys()) > 2 :
+            print(f"Round {round} eliminate 3 more boxes.")
             display_amounts(box_amount_pairs)
-            round_2(money_tree=box_amount_pairs, boxes_removed=boxes_removed, box_amount_pairs=box_amount_pairs, round=round )
+            other_rounds(money_tree=box_amount_pairs, boxes_removed=boxes_removed, box_amount_pairs=box_amount_pairs, round=round )            
+            banker_offer(boxes_available=box_amount_pairs)
             round += 1
             continue
-        elif round == 3:
-            print("Round 3 remove 4 more boxes from the money tree")
-            display_amounts(box_amount_pairs)
-            round_3(money_tree=box_amount_pairs, boxes_removed=boxes_removed, box_amount_pairs=box_amount_pairs, round=round )
-            round += 1
-            continue
-        elif round == 4:
-            print("Round 4 eliminate 3 more boxes")
-            display_amounts(box_amount_pairs)
-            round_4(money_tree=box_amount_pairs, boxes_removed=boxes_removed, box_amount_pairs=box_amount_pairs, round=round )
-            round += 1
-            continue
-        else:
+
+        elif round > 1 and len(boxes_removed.keys()) <= 2:
             #Final round
-            print("Round 5 eliminate 1 more box")
+            print(f"Round {round} eliminate 2 more box")
             print("Here you have choice to exchange your box with the reamining box")
             print("Or remove the last box remaining in the money tree")
             display_amounts(box_amount_pairs)
-            round_5(money_tree=box_amount_pairs, boxes_removed=boxes_removed, box_amount_pairs=box_amount_pairs, round=round )
+
             
             #If player refued all offers from banker up to this point
             print(f"Lets what is in your box number {box_player_picked.keys}")
